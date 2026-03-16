@@ -1,0 +1,48 @@
+{
+  "name": "automate",
+  "version": "1.0.0",
+  "description": "A NPM package used for task scheduling",
+  "homepage": "https://github.com/bakkuendo/automate#readme",
+  "bugs": {
+    "url": "https://github.com/bakkuendo/automate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bakkuendo/automate.git"
+  },
+  "license": "MIT",
+  "author": "anmol420",
+  "contributors": [
+    "divy404"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "node --watch --experimental-strip-types src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "node --eval \"fs.rmSync('dist', {recursive: true, force: true})\" && tsc --emitDeclarationOnly && esbuild src/index.ts --bundle --outfile=dist/index.js --format=esm --platform=node",
+    "start": "node dist/index.js",
+    "generate:pack": "npm pack --pack-destination ./packs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "automate": "file:packs/automate-1.0.0.tgz",
+    "esbuild": "^0.27.4",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
