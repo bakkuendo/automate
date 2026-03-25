@@ -1,4 +1,4 @@
-import Redis, {Redis as RedisClientType, RedisOptions} from "ioredis";
+import { Redis as RedisClientType } from "ioredis";
 import { RedisConnectConfig } from "../@types/redis";
 
 export class RedisClient {
@@ -21,11 +21,11 @@ export class RedisClient {
     return this.client;
   }
 
-  public connect(
-    config:
-      | { url: string }
-      | RedisConnectConfig
-  ): void {
+  public connect(url: string): void;
+
+  public connect(config: RedisConnectConfig): void;
+
+  public connect(arg: string | RedisConnectConfig): void {
     throw new Error("Method connect not implemented.");
   }
 
