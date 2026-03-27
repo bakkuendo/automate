@@ -1,14 +1,14 @@
 services:
-  cache:
-    image: redis:7.4-alpine
-    container_name: automate-test
-    restart: "no"
+  redis:
+    image: redis:latest
+    container_name: automate-redis-test
     ports:
       - "6378:6379"
-    command: redis-server --save 20 1 --loglevel warning --requirepass yourpassword
     volumes:
-      - cache:/data
+      - redis_data:/data
+    command: redis-server --user admin on ">password" ~* "&*" +@all
+    restart: unless-stopped
 
 volumes:
-  cache:
+  redis_data:
     driver: local
