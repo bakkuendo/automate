@@ -75,9 +75,7 @@ export class RedisClient {
     if (this.client) {
       throw new Error("Already connected to a redis instance.");
     }
-    console.log(arg.options);
     arg.options = this.generateURLOptions(arg.options);
-    console.log(arg.options);
     let url: string;
     if (
       arg.url.split(":")[0] === "redis" ||
