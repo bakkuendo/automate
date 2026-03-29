@@ -76,12 +76,10 @@ export class RedisClient {
       throw new Error("Already connected to a redis instance.");
     }
     arg.options = this.generateURLOptions(arg.options);
+    let parsedUrl: URL = new URL(arg.url);
     let url: string;
-    if (
-      arg.url.split(":")[0] === "redis" ||
-      arg.url.split(":")[0] === "rediss"
-    ) {
-      url = arg.url;
+    if (parsedUrl.protocol === "redis:" || parsedUrl.protocol === "rediss:") {
+      url = parsedUrl.toString();
     } else {
       throw new Error(
         `Invalid Redis URL: "${arg}". Expected format: redis://user:password@host:port`,
@@ -90,11 +88,25 @@ export class RedisClient {
     const client: Redis = new Redis(url, {
       ...arg.options,
     });
-    client.on("error", (err) => {
-      throw new Error("Redis error: ", err);
+    let connectionError: Error = new Error();
+    client.on("error", (err: Error) => {
+      connectionError = err;
     });
-    await client.connect();
-    this.client = client;
+    try {
+      await client.connect();
+      this.client = client;
+    } catch (e: any) {
+      await client.quit().catch(() => {});
+      if (connectionError.message.includes("WRONGPASS")) {
+        throw new Error("Invalid Redis credentials");
+      }
+      if (connectionError.message.includes("ECONNREFUSED")) {
+        throw new Error("Redis server not reachable");
+      }
+      throw new Error(
+        "Unknown Redis connection error: " + connectionError.message,
+      );
+    }
     return;
   }
 
@@ -116,11 +128,25 @@ export class RedisClient {
       password: arg.password,
       ...arg.options,
     });
-    client.on("error", (err) => {
-      throw new Error("Redis error: ", err);
+    let connectionError: Error = new Error();
+    client.on("error", (err: Error) => {
+      connectionError = err;
     });
-    await client.connect();
-    this.client = client;
+    try {
+      await client.connect();
+      this.client = client;
+    } catch (e: any) {
+      await client.quit().catch(() => {});
+      if (connectionError.message.includes("WRONGPASS")) {
+        throw new Error("Invalid Redis credentials");
+      }
+      if (connectionError.message.includes("ECONNREFUSED")) {
+        throw new Error("Redis server not reachable");
+      }
+      throw new Error(
+        "Unknown Redis connection error: " + connectionError.message,
+      );
+    }
     return;
   }
 
